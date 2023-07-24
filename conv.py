@@ -35,14 +35,12 @@ def configuration_file_get(filename=""):
                 current_comment = []
             current_comment.append(line[1:].strip())
             continue
-        # print(current_comment)
         if line.startswith('[') and line.endswith(']'):
-            if current_section:
-                data[current_section]['__comment'] = current_comment
-
             current_section = line[1:-1]
             data[current_section] = {}
-            current_comment = None
+            if current_comment:
+                data[current_section]["comment"]=current_comment
+                current_comment = None
             continue
 
         if '=' in line:
@@ -51,8 +49,8 @@ def configuration_file_get(filename=""):
             value = value.strip()
             if current_comment:
                 data[current_section][key] = {
-                    'value': value,
-                    'comment': current_comment
+                    'comment': current_comment,
+                    'value': value
                 }
                 current_comment = None
             else:
